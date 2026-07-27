@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asho Electronic.Store — Tech, at fair voltage.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F1115;
+    --surface: #171B22;
+    --surface-2: #1E232C;
+    --line: #2A303B;
+    --copper: #FF8A3D;
+    --cyan: #4DD9E8;
+    --text: #F1F3F5;
+    --muted: #8A94A6;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+  }
+
+  h1,h2,h3{
+    font-family:'Space Grotesk', sans-serif;
+    letter-spacing:-0.02em;
+  }
+
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  a{ color:inherit; text-decoration:none; }
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  /* Circuit trace divider - signature element */
+  .trace{
+    height:2px;
+    width:100%;
+    background:
+      linear-gradient(90deg, transparent, var(--line) 8%, var(--line) 92%, transparent);
+    position:relative;
+    margin:0;
+  }
+  .trace::before, .trace::after{
+    content:'';
+    position:absolute;
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--copper);
+    top:50%; transform:translateY(-50%);
+    box-shadow:0 0 8px var(--copper);
+  }
+  .trace::before{ left:8%; }
+  .trace::after{ left:92%; }
+
+  /* Header */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(15,17,21,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 32px;
+    max-width:1180px; margin:0 auto;
+  }
+  .logo{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:20px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--copper);
+    box-shadow:0 0 10px var(--copper);
+  }
+  .logo span{ color:var(--muted); font-weight:500; font-size:14px; }
+  .nav-links{ display:flex; gap:36px; font-size:14px; color:var(--muted); }
+  .nav-links a:hover{ color:var(--cyan); }
+  .nav-cta{
+    background:var(--copper); color:#151107;
+    padding:10px 20px; border-radius:4px;
+    font-weight:600; font-size:14px;
+    transition:transform 0.15s ease, box-shadow .15s ease;
+  }
+  .nav-cta:hover{ transform:translateY(-1px); box-shadow:0 4px 16px rgba(255,138,61,0.35); }
+  .menu-toggle{ display:none; background:none; border:none; color:var(--text); font-size:24px; cursor:pointer; }
+
+  /* Hero */
+  .hero{
+    padding:100px 0 80px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:'';
+    position:absolute;
+    top:-200px; right:-200px;
+    width:600px; height:600px;
+    background:radial-gradient(circle, rgba(255,138,61,0.12), transparent 70%);
+    pointer-events:none;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; color:var(--cyan);
+    background:rgba(77,217,232,0.08);
+    border:1px solid rgba(77,217,232,0.25);
+    padding:6px 12px; border-radius:100px;
+    margin-bottom:28px;
+  }
+  .hero h1{
+    font-size:clamp(38px, 6vw, 64px);
+    font-weight:700;
+    max-width:780px;
+    line-height:1.08;
+  }
+  .hero h1 .accent{ color:var(--copper); }
+  .hero p{
+    color:var(--muted);
+    font-size:18px;
+    max-width:520px;
+    margin-top:24px;
+  }
+  .hero-actions{
+    display:flex; gap:16px; margin-top:36px; flex-wrap:wrap;
+  }
+  .btn-primary{
+    background:var(--copper); color:#151107;
+    padding:14px 28px; border-radius:4px;
+    font-weight:600; font-size:15px;
+    display:inline-block;
+    transition:transform 0.15s ease, box-shadow .15s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 6px 20px rgba(255,138,61,0.35); }
+  .btn-secondary{
+    border:1px solid var(--line); color:var(--text);
+    padding:14px 28px; border-radius:4px;
+    font-weight:600; font-size:15px;
+    display:inline-block;
+    transition:border-color .15s ease;
+  }
+  .btn-secondary:hover{ border-color:var(--cyan); color:var(--cyan); }
+
+  .hero-stats{
+    display:flex; gap:48px; margin-top:64px;
+    flex-wrap:wrap;
+  }
+  .hero-stats div .num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:26px; font-weight:600; color:var(--text);
+  }
+  .hero-stats div .lbl{
+    font-size:13px; color:var(--muted); margin-top:4px;
+  }
+
+  /* Section shell */
+  section{ padding:88px 0; }
+  .section-head{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    margin-bottom:48px; flex-wrap:wrap; gap:16px;
+  }
+  .section-tag{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--copper); font-size:13px;
+    margin-bottom:12px; display:block;
+  }
+  .section-head h2{ font-size:clamp(28px, 4vw, 38px); }
+  .section-head p{ color:var(--muted); max-width:420px; }
+
+  /* Categories / Services List */
+  .cat-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .cat-card{
+    background:var(--surface);
+    padding:32px;
+    transition:background .2s ease;
+  }
+  .cat-card:hover{ background:var(--surface-2); }
+  .cat-icon{
+    width:44px; height:44px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:8px;
+    background:rgba(255,138,61,0.1);
+    color:var(--copper);
+    margin-bottom:20px;
+  }
+  .cat-card h3{ font-size:18px; margin-bottom:8px; }
+  .cat-card p{ color:var(--muted); font-size:14px; }
+  .cat-card .cat-count{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; color:var(--cyan); margin-top:16px; display:block;
+  }
+
+  /* Product Gallery */
+  .prod-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:20px;
+  }
+  .prod-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .prod-card:hover{ border-color:var(--copper); transform:translateY(-3px); }
+  .prod-thumb{
+    height:150px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:36px;
+    position:relative;
+  }
+  .prod-thumb .badge{
+    position:absolute; top:10px; left:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px; background:var(--bg);
+    color:var(--cyan); padding:3px 8px; border-radius:100px;
+    border:1px solid var(--cyan);
+  }
+  .prod-body{ padding:18px; }
+  .prod-body .cat{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; }
+  .prod-body h4{ font-size:15px; margin:6px 0 10px; font-weight:600; }
+  .prod-price{ display:flex; justify-content:space-between; align-items:center; }
+  .prod-price .price{ font-family:'JetBrains Mono', monospace; color:var(--copper); font-weight:600; }
+  .prod-price .old{ font-family:'JetBrains Mono', monospace; color:var(--muted); text-decoration:line-through; font-size:12px; }
+
+  /* Pricing / Offers */
+  .offer-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:24px;
+  }
+  .offer-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:36px 28px;
+    position:relative;
+  }
+  .offer-card.featured{
+    border-color:var(--copper);
+    background:linear-gradient(180deg, rgba(255,138,61,0.06), var(--surface) 40%);
+  }
+  .offer-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; color:var(--cyan);
+    display:block; margin-bottom:16px;
+  }
+  .offer-card h3{ font-size:20px; margin-bottom:8px; }
+  .offer-card .desc{ color:var(--muted); font-size:14px; margin-bottom:24px; }
+  .offer-price{ font-family:'JetBrains Mono', monospace; font-size:32px; font-weight:600; }
+  .offer-price span{ font-size:14px; color:var(--muted); font-weight:400; }
+  .offer-list{ list-style:none; margin-top:24px; }
+  .offer-list li{
+    font-size:14px; color:var(--text);
+    padding:8px 0; border-top:1px solid var(--line);
+    display:flex; gap:10px;
+  }
+  .offer-list li::before{ content:'▸'; color:var(--copper); }
+  .offer-btn{
+    display:block; text-align:center;
+    margin-top:28px; padding:12px;
+    border-radius:4px; font-weight:600; font-size:14px;
+    border:1px solid var(--line);
+    transition:all .15s ease;
+  }
+  .offer-card.featured .offer-btn{ background:var(--copper); color:#151107; border-color:var(--copper); }
+  .offer-btn:hover{ border-color:var(--cyan); color:var(--cyan); }
+  .offer-card.featured .offer-btn:hover{ color:#151107; opacity:0.9; }
+
+  /* Contact */
+  .contact-shell{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:56px;
+    align-items:start;
+  }
+  .contact-info h3{ font-size:24px; margin-bottom:16px; }
+  .contact-info p{ color:var(--muted); margin-bottom:32px; max-width:400px; }
+  .contact-row{
+    display:flex; gap:14px; align-items:center;
+    padding:16px 0; border-top:1px solid var(--line);
+    font-size:14px;
+  }
+  .contact-row .ic{ color:var(--cyan); font-family:'JetBrains Mono', monospace; }
+  .contact-row:last-child{ border-bottom:1px solid var(--line); }
+
+  form{ display:flex; flex-direction:column; gap:18px; }
+  .field label{
+    display:block; font-size:12px; font-family:'JetBrains Mono', monospace;
+    color:var(--muted); margin-bottom:8px;
+  }
+  .field input, .field textarea{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--text);
+    padding:13px 14px;
+    border-radius:4px;
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+  }
+  .field input:focus, .field textarea:focus{
+    outline:none; border-color:var(--cyan);
+  }
+  .field textarea{ resize:vertical; min-height:100px; }
+  .submit-btn{
+    background:var(--copper); color:#151107;
+    border:none; padding:14px; border-radius:4px;
+    font-weight:600; font-size:15px; cursor:pointer;
+    font-family:'Inter', sans-serif;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .submit-btn:hover{ transform:translateY(-1px); box-shadow:0 6px 20px rgba(255,138,61,0.3); }
+  .form-note{ font-size:12px; color:var(--muted); }
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:48px 0 32px;
+  }
+  .footer-shell{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+  }
+  footer .logo{ margin-bottom:8px; }
+  footer p{ color:var(--muted); font-size:13px; }
+  .foot-links{ display:flex; gap:24px; font-size:13px; color:var(--muted); }
+  .foot-links a:hover{ color:var(--cyan); }
+
+  @media (max-width: 860px){
+    .nav-links{ display:none; }
+    .cat-grid{ grid-template-columns:1fr; }
+    .prod-grid{ grid-template-columns:repeat(2, 1fr); }
+    .offer-grid{ grid-template-columns:1fr; }
+    .contact-shell{ grid-template-columns:1fr; }
+    .hero{ padding:64px 0 48px; }
+    section{ padding:56px 0; }
+  }
+  @media (max-width: 480px){
+    .prod-grid{ grid-template-columns:1fr; }
+    .wrap{ padding:0 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">
+      <span class="dot"></span>
+      ASHO <span>electronic.store</span>
+    </div>
+    <div class="nav-links">
+      <a href="#categories">Categories</a>
+      <a href="#products">Products</a>
+      <a href="#offers">Offers</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a href="#contact" class="nav-cta">Get a Quote</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">● in stock · Karachi warehouse</span>
+    <h1>Genuine electronics,<br>priced at <span class="accent">fair voltage.</span></h1>
+    <p>Asho Electronic.Store sources phones, laptops, audio and smart-home gear directly from authorized distributors — no markup games, no grey-market guessing.</p>
+    <div class="hero-actions">
+      <a href="#products" class="btn-primary">Browse Products</a>
+      <a href="#contact" class="btn-secondary">Talk to Sales</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="num mono">4,800+</div><div class="lbl">Orders delivered</div></div>
+      <div><div class="num mono">100%</div><div class="lbl">Genuine warranty</div></div>
+      <div><div class="num mono">24–48h</div><div class="lbl">Nationwide dispatch</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="trace"></div>
+
+<section id="categories">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// what we stock</span>
+        <h2>Shop by category</h2>
+      </div>
+      <p>From daily-driver phones to studio audio — every category is checked for authenticity before listing.</p>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card">
+        <div class="cat-icon">📱</div>
+        <h3>Mobiles & Tablets</h3>
+        <p>Latest flagships and budget-friendly Androids, PTA-approved.</p>
+        <span class="cat-count">128 items</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">💻</div>
+        <h3>Laptops & PCs</h3>
+        <p>Business ultrabooks, gaming rigs, and everyday workhorses.</p>
+        <span class="cat-count">76 items</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🎧</div>
+        <h3>Audio</h3>
+        <p>Wireless earbuds, headphones, and Bluetooth speakers.</p>
+        <span class="cat-count">94 items</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">⌚</div>
+        <h3>Wearables</h3>
+        <p>Smartwatches and fitness bands with health tracking.</p>
+        <span class="cat-count">41 items</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🏠</div>
+        <h3>Smart Home</h3>
+        <p>Smart plugs, cameras, and voice assistants for the house.</p>
+        <span class="cat-count">33 items</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🔌</div>
+        <h3>Accessories</h3>
+        <p>Chargers, cables, power banks, and protective gear.</p>
+        <span class="cat-count">160 items</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trace"></div>
+
+<section id="products">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// this week</span>
+        <h2>Featured products</h2>
+      </div>
+      <p>A rotating pick of what's moving fastest this week.</p>
+    </div>
+    <div class="prod-grid">
+      <div class="prod-card">
+        <div class="prod-thumb" style="background:linear-gradient(160deg,#1c2333,#12161d);">
+          <span class="badge">NEW</span>📱
+        </div>
+        <div class="prod-body">
+          <span class="cat">Mobile</span>
+          <h4>NovaTech X12 Pro, 256GB</h4>
+          <div class="prod-price">
+            <span class="price">Rs 189,999</span>
+          </div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-thumb" style="background:linear-gradient(160deg,#231c33,#161217);">💻</div>
+        <div class="prod-body">
+          <span class="cat">Laptop</span>
+          <h4>AeroBook 14" i5, 16GB RAM</h4>
+          <div class="prod-price">
+            <span class="price">Rs 154,500</span>
+            <span class="old">Rs 172,000</span>
+          </div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-thumb" style="background:linear-gradient(160deg,#1c332b,#121d18);">
+          <span class="badge">SALE</span>🎧
+        </div>
+        <div class="prod-body">
+          <span class="cat">Audio</span>
+          <h4>PulseBuds ANC Wireless</h4>
+          <div class="prod-price">
+            <span class="price">Rs 8,999</span>
+            <span class="old">Rs 12,500</span>
+          </div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-thumb" style="background:linear-gradient(160deg,#332a1c,#1d1812);">⌚</div>
+        <div class="prod-body">
+          <span class="cat">Wearable</span>
+          <h4>PulseFit Series 3 Watch</h4>
+          <div class="prod-price">
+            <span class="price">Rs 14,250</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trace"></div>
+
+<section id="offers">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// pricing</span>
+        <h2>Buy plans & offers</h2>
+      </div>
+      <p>Whether you're buying one gadget or stocking a shop, there's a lane for you.</p>
+    </div>
+    <div class="offer-grid">
+      <div class="offer-card">
+        <span class="offer-tag">RETAIL</span>
+        <h3>Single Item</h3>
+        <p class="desc">For individual buyers grabbing one product at a time.</p>
+        <div class="offer-price">Market price</div>
+        <ul class="offer-list">
+          <li>Genuine warranty card</li>
+          <li>Cash on delivery available</li>
+          <li>7-day return window</li>
+        </ul>
+        <a href="#contact" class="offer-btn">Shop Now</a>
+      </div>
+      <div class="offer-card featured">
+        <span class="offer-tag">BUNDLE</span>
+        <h3>Home Setup Bundle</h3>
+        <p class="desc">Phone + earbuds + power bank, bundled at a discount.</p>
+        <div class="offer-price">Save 15% <span>on bundle</span></div>
+        <ul class="offer-list">
+          <li>Everything in Retail</li>
+          <li>Free express delivery</li>
+          <li>Priority support line</li>
+        </ul>
+        <a href="#contact" class="offer-btn">Build My Bundle</a>
+      </div>
+      <div class="offer-card">
+        <span class="offer-tag">WHOLESALE</span>
+        <h3>Bulk / Reseller</h3>
+        <p class="desc">For shop owners and resellers ordering 10+ units.</p>
+        <div class="offer-price">Custom quote</div>
+        <ul class="offer-list">
+          <li>Volume-based pricing</li>
+          <li>Dedicated account manager</li>
+          <li>Invoice & GST support</li>
+        </ul>
+        <a href="#contact" class="offer-btn">Request Quote</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trace"></div>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// get in touch</span>
+        <h2>Order or ask a question</h2>
+      </div>
+    </div>
+    <div class="contact-shell">
+      <div class="contact-info">
+        <h3>We reply within a few hours</h3>
+        <p>Send your details and what you're looking for — our team confirms stock and pricing before you pay anything.</p>
+        <div class="contact-row"><span class="ic">TEL</span> +92 300 1234567</div>
+        <div class="contact-row"><span class="ic">MAIL</span> hello@ashoelectronic.store</div>
+        <div class="contact-row"><span class="ic">LOC</span> Karachi, Pakistan — nationwide delivery</div>
+        <div class="contact-row"><span class="ic">HRS</span> Mon–Sat, 10am – 8pm</div>
+      </div>
+      <form onsubmit="return handleSubmit(event)">
+        <div class="field">
+          <label for="name">Full name</label>
+          <input type="text" id="name" required placeholder="Your name">
+        </div>
+        <div class="field">
+          <label for="phone">Phone or email</label>
+          <input type="text" id="phone" required placeholder="03xx-xxxxxxx or email">
+        </div>
+        <div class="field">
+          <label for="message">What are you looking for?</label>
+          <textarea id="message" required placeholder="e.g. NovaTech X12 Pro, 256GB — need 2 units"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Send Inquiry</button>
+        <p class="form-note">This form doesn't send yet — connect it to an email service or backend before going live.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-shell">
+    <div>
+      <div class="logo"><span class="dot"></span> ASHO <span>electronic.store</span></div>
+      <p>© 2026 Asho Electronic.Store. All rights reserved.</p>
+    </div>
+    <div class="foot-links">
+      <a href="#categories">Categories</a>
+      <a href="#products">Products</a>
+      <a href="#offers">Offers</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function handleSubmit(e){
+  e.preventDefault();
+  alert("Thanks! This is a demo form — connect it to email/WhatsApp/backend to receive real inquiries.");
+  e.target.reset();
+  return false;
+}
+</script>
+
+</body>
+</html>
